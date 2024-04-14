@@ -16,7 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+from django.conf.urls.static import static
+from django.conf import settings
 from myapp import views 
 
 urlpatterns = [
@@ -24,8 +25,11 @@ urlpatterns = [
     path('', views.index, name='index'),   
     path('order_digital_appliances/', views.order_digital_appliances, name='order_digital_appliances'),  
     path('order_clothes/', views.order_clothes, name='order_clothes'),  
-    path('order_groceries/', views.order_groceries, name='order_groceries'),  # Corrected name here
+    path('order_groceries/', views.order_groceries, name='order_groceries'),  
     path('cart/', views.cart, name="cart"),
-    path('wishlist/',views.wishlist,name='wishlist'),
     path('checkout/', views.checkout, name='checkout'),
+    path('update_item/', views.updateItem, name='update_item'),
+
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

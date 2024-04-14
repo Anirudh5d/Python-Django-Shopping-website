@@ -21,22 +21,17 @@ class Clothing(models.Model):
     name = models.CharField(max_length=100)
     price = models.FloatField()
     description = models.TextField()
+    image = models.ImageField(null=True, blank= True)
 
     def __str__(self):
         return self.name
+
 
 class Groceries(models.Model):
     name = models.CharField(max_length=100)
     price = models.FloatField()
     description = models.TextField()
-
-    def __str__(self):
-        return self.name
-    
-class Food(models.Model):
-    name = models.CharField(max_length=100)
-    price = models.FloatField()
-    description = models.TextField()
+    image = models.ImageField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -45,6 +40,7 @@ class DigitalAppliances(models.Model):
     name = models.CharField(max_length=100)
     price = models.FloatField()
     description = models.TextField()
+    image = models.ImageField(null=True, blank= True)
 
     def __str__(self):
         return self.name
@@ -56,15 +52,32 @@ class Order(models.Model):
     transaction_id= models.CharField(max_length=200, null=True)
 
     def __str__(self):
-        return self.transaction_id 
+        return str(self.id) 
+    @property
+    def get_cart_total(self):
+        orderitems = self.orderitem_set.all()
+        total = sum([i.get_total for i in orderitems])
+        return total 
+    
+    @property
+    def get_cart_items(self):
+        orderitems = self.orderitem_set.all()
+        total = sum([i.get_total for i in orderitems])
+        return total 
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL, null=True)
     object_id = models.PositiveIntegerField()
     product = GenericForeignKey('content_type', 'object_id')
-    qauntity = models.IntegerField(default=0, null=True, blank=True)
+    quantity = models.IntegerField(default=0, null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def get_total(self):
+        total = self.product.price * self.quantity
+        return total
+
 
 class ShippingAddress(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, blank=True,null=True)
